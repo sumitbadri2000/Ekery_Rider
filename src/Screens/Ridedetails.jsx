@@ -8,11 +8,12 @@ import MapViewDirections from 'react-native-maps-directions';
 import {Box, Text, Button} from 'native-base';
 import io from 'socket.io-client';
 
+
 const Ridedetails = ({navigation, route}) => {
   const [ride, setRide] = useState(null);
   const [fromCoordinates, setFromCoordinates] = useState(null);
   const [toCoordinates, setToCoordinates] = useState(null);
-  const socket = io('http://192.168.1.10:5000');
+  const socket = io('http://192.168.1.18:5000');
   const [riderCurrentLoc, setRiderCurrentLoc] = useState({
     latitude: 28.7041, // Initial latitude for Pitampura
     longitude: 77.1025, // Initial longitude for Pitampura
@@ -24,7 +25,7 @@ const Ridedetails = ({navigation, route}) => {
     const getRidedetails = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.1.10:5000/api/ride-details/${RideId}`,
+          `http://192.168.1.18:5000/api/ride-details/${RideId}`,
         );
 
         const rideData = response.data;
@@ -50,7 +51,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const startRide = async () => {
     try {
-      await axios.post(`http://192.168.1.10:5000/api/start-ride/${RideId}`);
+      await axios.post(`http://192.168.1.18:5000/api/start-ride/${RideId}`);
       socket.emit('rideStatusChange', {RideId: RideId, status: 'started'}); // Emit socket event
       setRide({...ride, status: 'started'}); // Update local state
     } catch (error) {
@@ -60,7 +61,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const reachUser = async () => {
     try {
-      await axios.post(`http://192.168.1.10:5000/api/reach-user/${RideId}`);
+      await axios.post(`http://192.168.1.18:5000/api/reach-user/${RideId}`);
       socket.emit('rideStatusChange', {RideId: RideId, status: 'arrived'});
       setRide({...ride, status: 'arrived'});
     } catch (error) {
@@ -70,7 +71,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const endRide = async () => {
     try {
-      await axios.post(`http://192.168.1.10:5000/api/end-ride/${RideId}`);
+      await axios.post(`http://192.168.1.18:5000/api/end-ride/${RideId}`);
       socket.emit('rideStatusChange', {RideId: RideId, status: 'completed'});
       setRide({...ride, status: 'completed'});
     } catch (error) {

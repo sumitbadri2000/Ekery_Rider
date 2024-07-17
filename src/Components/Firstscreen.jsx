@@ -44,7 +44,7 @@ const Firstscreen = ({navigation}) => {
             alignSelf={'center'}
             borderRadius={'full'}
             onPress={() => {
-              navigation.navigate('RiderSignup');
+              navigation.navigate('Signinmobile');
             }}>
             <Text fontSize={'2xl'} color={'#FFFFFF'} fontWeight={'500'}>
               GET STARTED

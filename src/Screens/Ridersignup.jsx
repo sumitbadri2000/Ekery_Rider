@@ -1,9 +1,11 @@
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
-import {Box, Text, Stack, Input, Button, Image, ScrollView} from 'native-base';
+import {Box, Text, Stack, Input, Button, Image, ScrollView , Flex, Divider , Spinner} from 'native-base';
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/AntDesign'
+import Icons from 'react-native-vector-icons/MaterialIcons'
 
 const Ridersignup = ({navigation}) => {
   const [name, setName] = useState('');
@@ -17,6 +19,9 @@ const Ridersignup = ({navigation}) => {
   const [panback, setPanback] = useState(null);
   const [DLfront, setDLfront] = useState(null);
   const [DLback, setDLback] = useState(null);
+  const [isDocument , setIsDocument] = useState(false)
+  const [isDriverinfo , setIsDriverinfo] = useState(true)
+  const [isLoader , setIsLoader] = useState(false)
 
   const handleChoosePhoto = setter => {
     launchImageLibrary({}, response => {
@@ -28,7 +33,13 @@ const Ridersignup = ({navigation}) => {
     });
   };
 
+  const handleNext = ()=>{
+    setIsDriverinfo(false)
+    setIsDocument(true)
+  }
+
   const handleSubmit = async () => {
+    setIsLoader(true)
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', mail);
@@ -72,7 +83,7 @@ const Ridersignup = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.1.10:5000/api/driver/new',
+        'http://192.168.1.18:5000/api/driver/new',
         formData,
         {
           headers: {
@@ -86,7 +97,7 @@ const Ridersignup = ({navigation}) => {
         console.log(response.data.data.email);
         await AsyncStorage.multiSet([
           ['isDriverSignup', 'true'],
-          ['userid', response.data.data._id],
+          ['driverid', response.data.data._id],
           ['name', response.data.data.name],
           ['email', response.data.data.email],
         ]);
@@ -102,167 +113,421 @@ const Ridersignup = ({navigation}) => {
   };
 
   return (
-    <ScrollView>
-      <Box
-        width={'100%'}
-        height={'100%'}
-        backgroundColor={'#FFFFFF'}
-        display={'flex'}
-        justifyContent={'start'}
-        alignItems={'center'}>
-        <Box height={'30%'} marginTop={'10'}>
-          <Text color={'#000000'} fontSize={'2xl'} textAlign={'center'}>
-            Complete your profile
-          </Text>
-          <Stack space={4} width="80%" maxW="370px" mx="auto">
-            <Input
-              variant="underlined"
-              placeholder="Name"
-              width={'90%'}
-              marginTop={'8'}
-              fontSize={'lg'}
-              placeholderTextColor={'black'}
-              value={name}
-              onChangeText={setName}
-            />
+    <ScrollView backgroundColor={'#FFFFFF'}
+>
+    <Box
+      width={'100%'}
+      height={'100%'}
+      display={'flex'}
+      justifyContent={'start'}
+      alignItems={'center'}>
+      <Box height={'30%'} marginTop={'10'} width={'100%'}>
+        
 
-            <Input
-              variant="underlined"
-              placeholder="Email"
-              width={'90%'}
-              fontSize={'lg'}
-              placeholderTextColor={'black'}
-              value={mail}
-              onChangeText={setMail}
-            />
+        {isDriverinfo && <Stack space={4} width="90%" maxW="370px" mx="auto">
+        <Text color={'#000000'} fontSize={'2xl'} textAlign={'center'}>
+          Complete your profile
+        </Text>
+          <Input
+            variant="underlined"
+            placeholder="Name"
+            width={'100%'}
+            marginTop={'8'}
+            fontSize={'lg'}
+            placeholderTextColor={'black'}
+            value={name}
+            onChangeText={setName}
+          />
 
-            <Input
-              variant="underlined"
-              placeholder="Enter Gst (Optional)"
-              fontSize={'lg'}
-              placeholderTextColor={'black'}
-              value={gst}
-              onChangeText={setGst}
-            />
+          <Input
+            variant="underlined"
+            placeholder="Email"
+            width={'100%'}
+            fontSize={'lg'}
+            placeholderTextColor={'black'}
+            value={mail}
+            onChangeText={setMail}
+          />
 
-            <Input
-              variant="underlined"
-              placeholder="Enter Referral code (Optional)"
-              fontSize={'lg'}
-              placeholderTextColor={'black'}
-              value={referral}
-              onChangeText={setReferral}
-            />
+          <Input
+            variant="underlined"
+            placeholder="Enter Gst (Optional)"
+            fontSize={'lg'}
+            placeholderTextColor={'black'}
+            value={gst}
+            onChangeText={setGst}
+          />
 
-            <Button
-              onPress={() => handleChoosePhoto(setPhoto)}
-              backgroundColor={'#E87429'}>
-              Choose Photo
-            </Button>
-            {photo && (
-              <Image
-                alt="photo"
-                source={{uri: photo.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
+          <Input
+            variant="underlined"
+            placeholder="Enter Referral code (Optional)"
+            fontSize={'lg'}
+            placeholderTextColor={'black'}
+            value={referral}
+            onChangeText={setReferral}
+          />
 
-            <Button
-              onPress={() => handleChoosePhoto(setAadharfront)}
-              backgroundColor={'#E87429'}>
-              Choose Aadhaar front Photo
-            </Button>
-            {aadharfront && (
-              <Image
-                alt="aadharfront"
-                source={{uri: aadharfront.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
+<Button
+            backgroundColor={'#E87429'}
+            color={'#FFFFFF'}
+            py={2}
+            px={6}
+            alignSelf={'center'}
+            borderRadius={'full'}
+            marginBottom={'1.5'}
+            onPress={handleNext}>
+            <Text fontSize={'xl'} color={'#FFFFFF'} fontWeight={'500'}>
+              Submit{' '}
+            </Text>
+          </Button>
 
-            <Button
-              onPress={() => handleChoosePhoto(setAadharback)}
-              backgroundColor={'#E87429'}>
-              Choose Aadhar back Photo
-            </Button>
-            {aadharback && (
-              <Image
-                alt="aadharback"
-                source={{uri: aadharback.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
-
-            <Button
-              onPress={() => handleChoosePhoto(setPanfront)}
-              backgroundColor={'#E87429'}>
-              Choose Pan Card Front Photo
-            </Button>
-            {panfront && (
-              <Image
-                alt="panfront"
-                source={{uri: panfront.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
-
-            <Button
-              onPress={() => handleChoosePhoto(setPanback)}
-              backgroundColor={'#E87429'}>
-              Choose Pan Card Back Photo
-            </Button>
-            {panback && (
-              <Image
-                alt="panback"
-                source={{uri: panback.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
-
-            <Button
-              onPress={() => handleChoosePhoto(setDLfront)}
-              backgroundColor={'#E87429'}>
-              Choose Driver License Front photo
-            </Button>
-            {DLfront && (
-              <Image
-                alt="DLfront"
-                source={{uri: DLfront.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
-
-            <Button
-              onPress={() => handleChoosePhoto(setDLback)}
-              backgroundColor={'#E87429'}>
-              Choose Driver License Back photo
-            </Button>
-            {DLback && (
-              <Image
-                alt="DLback"
-                source={{uri: DLback.uri}}
-                style={{width: 100, height: 100}}
-              />
-            )}
-
-            <Button
-              backgroundColor={'#E87429'}
-              color={'#FFFFFF'}
-              py={2}
-              px={6}
-              // width={'50%'}
-              alignSelf={'center'}
-              borderRadius={'full'}
-              marginBottom={'1.5'}
-              onPress={handleSubmit}>
-              <Text fontSize={'xl'} color={'#FFFFFF'} fontWeight={'500'}>
-                Submit{' '}
-              </Text>
-            </Button>
           </Stack>
-        </Box>
+}
+        
+
+{isDocument && <Stack space={4} width="90%" maxW="370px" mx="auto">
+
+<Text color={'#000000'} fontSize={'xl'} textAlign={'center'}>
+          Submit your document to complete your profile
+        </Text>
+          {/* Example of Your PAN Card Photo selection */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setPhoto)} style={{marginTop:10}}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'48'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'space-between'}>
+                <Icon name="filetext1" size={22} />
+                <Box>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Your PAN Card Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display PAN Card Photo if selected */}
+          {photo && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='cx'
+                source={{ uri: photo.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Example of Aadhaar Front Photo selection */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setAadharfront)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose Aadhaar Front Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display Aadhaar Front Photo if selected */}
+          {aadharfront && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='cc'
+                source={{ uri: aadharfront.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Repeat the above structure for Aadhaar Back Photo */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setAadharback)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose Aadhaar Back Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display Aadhaar Back Photo if selected */}
+          {aadharback && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='cz'
+                source={{ uri: aadharback.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Repeat the structure for PAN Card Front Photo */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setPanfront)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose PAN Card Front Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display PAN Card Front Photo if selected */}
+          {panfront && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='cs'
+                source={{ uri: panfront.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Repeat the structure for PAN Card Back Photo */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setPanback)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose PAN Card Back Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display PAN Card Back Photo if selected */}
+          {panback && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='sf'
+                source={{ uri: panback.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Repeat the structure for DL Front Photo */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setDLfront)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose DL Front Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display DL Front Photo if selected */}
+          {DLfront && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='dss'
+                source={{ uri: DLfront.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Repeat the structure for DL Back Photo */}
+          <TouchableOpacity onPress={() => handleChoosePhoto(setDLback)}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}>
+              <Flex
+                width={'64'}
+                flexDirection={'row'}
+                alignItems={'center'}
+                justifyContent={'start'}>
+                <Icon name="filetext1" size={22} />
+                <Box marginLeft={'4'}>
+                  <Text fontSize={'md'} fontWeight={'medium'}>
+                    Choose DL Back Photo
+                  </Text>
+                  <Text fontSize={'sm'} fontWeight={'light'}>
+                    Must be clearly visible
+                  </Text>
+                </Box>
+              </Flex>
+              <Icon name="arrow-forward-ios" size={25} />
+            </Box>
+            <Divider
+              borderColor={'muted.500'}
+              width={'container'}
+              color={'#000000'}
+              marginTop={'2'}
+            />
+          </TouchableOpacity>
+
+          {/* Display DL Back Photo if selected */}
+          {DLback && (
+            <Box alignItems="center" marginTop={4}>
+              <Image
+              alt='dss'
+                source={{ uri: DLback.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </Box>
+          )}
+
+          {/* Submit Button */}
+          <Button
+            backgroundColor={'#E87429'}
+            color={'#FFFFFF'}
+            py={2}
+            px={100}
+            alignSelf={'center'}
+            borderRadius={'full'}
+            onPress={handleSubmit} 
+            marginBottom={'12'}>
+            {isLoader ? (
+        <Spinner  color={'#FFFFFF'} />
+      ) : (
+        <Text fontSize={'xl'} color={'#FFFFFF'} fontWeight={'500'}>
+          Submit{' '}
+        </Text>
+      )}
+          </Button>
+        </Stack>}
+     
       </Box>
-    </ScrollView>
+    </Box>
+  </ScrollView>
   );
 };
 

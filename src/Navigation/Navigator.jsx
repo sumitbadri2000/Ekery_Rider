@@ -7,6 +7,8 @@ import {NativeBaseProvider} from 'native-base';
 import Ridersignup from '../Screens/Ridersignup';
 import Riderbottomnavigator from './Riderbottomnavigator';
 import Homerider from '../Screens/Homerider';
+import Signinmobile from '../Screens/Signinmobile';
+import Otpscreen from '../Screens/Otpscreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,8 @@ const Navigator = () => {
           <Stack.Screen name="RiderSignup" component={Ridersignup} />
           <Stack.Screen name="RiderBottom" component={Riderbottomnavigator} />
           <Stack.Screen name="RiderHomescreen" component={Homerider} />
+          <Stack.Screen name='Signinmobile' component={Signinmobile}></Stack.Screen>
+          <Stack.Screen name='Otp' component={Otpscreen}></Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

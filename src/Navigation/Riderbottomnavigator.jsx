@@ -18,7 +18,7 @@ const Riderbottomnavigator = () => {
           component={RiderNavigation}
           options={{
             headerShown: false,
-            tabBarLabel: 'Home',
+            tabBarLabel: 'Rides',
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="home" color={color} size={size} />
             ),

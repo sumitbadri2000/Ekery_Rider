@@ -18,9 +18,13 @@ const Homerider = ({navigation}) => {
   const [rides, setRides] = useState([]);
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [driverid , setDriverid] = useState(null)
 
   const getName = async () => {
     const name = await AsyncStorage.getItem('name');
+    const driverid = await AsyncStorage.getItem('driverid')
+    setDriverid(driverid)
+    console.log(driverid)
     setName(name);
   };
 
@@ -29,7 +33,7 @@ const Homerider = ({navigation}) => {
       setLoading(true);
       try {
         const response = await axios.get(
-          'http://192.168.1.10:5000/api/all-rides',
+          'http://192.168.1.18:5000/api/all-rides',
         );
         console.log(response.data);
         setLoading(false);
@@ -48,8 +52,8 @@ const Homerider = ({navigation}) => {
   const acceptRide = async Rideid => {
     try {
       const response = await axios.post(
-        `http://192.168.1.10:5000/api/accept-ride/${Rideid}`,
-        {Riderid: 'Madan-2204'},
+        `http://192.168.1.18:5000/api/accept-ride/${Rideid}`,
+        {Riderid: driverid},
       );
       if (response.status == 200) {
         navigation.navigate('Ridedetails', {RideId: Rideid});
