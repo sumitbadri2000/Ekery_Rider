@@ -10,9 +10,12 @@ import {
   Divider,
   Button,
   ScrollView,
+  Flex,
 } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icons from 'react-native-vector-icons/Octicons'
+import Icon1 from 'react-native-vector-icons/Feather'
 
 const Homerider = ({navigation}) => {
   const [rides, setRides] = useState([]);
@@ -63,6 +66,15 @@ const Homerider = ({navigation}) => {
     }
   };
 
+  const formatTime = timestamp => {
+    const date = new Date(timestamp);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+
   return (
     <NativeBaseProvider>
       <ScrollView backgroundColor={'#FFFFFF'}>
@@ -99,75 +111,54 @@ const Homerider = ({navigation}) => {
             </View>
           ) : (
             rides.map((ride, index) => (
-              <Box
-                key={index}
-                width={'100%'}
-                maxHeight={'64'}
-                marginTop={'5'}
-                display={'flex'}
-                justifyContent={'center'}
-                alignItems={'center'}
-                flexDirection={'column'}>
-                <Box
-                  width={'90%'}
-                  marginX={'auto'}
-                  height={'90%'}
-                  display={'flex'}
-                  flexDirection={'row'}
-                  justifyContent={'space-between'}
-                  alignItems={'center'}
-                  position={'relative'}>
-                  <Box width={'30%'}>
-                    <Text fontSize={'lg'}>From</Text>
-                    <Text
-                      fontSize={'xs'}
-                      width={'100%'}
-                      fontWeight={'600'}
-                      marginTop={'1'}>
-                      {ride.Toloc}
-                    </Text>
-                    <Box
-                      backgroundColor={'#000000'}
-                      width={'100%'}
-                      borderRadius={'2xl'}
-                      marginTop={'2'}>
-                      <Text
-                        textAlign={'center'}
-                        fontSize={'xl'}
-                        fontWeight={'semibold'}
-                        color={'#FFFFFF'}
-                        marginX={'1.5'}>
-                        ₹{ride.fare}
-                      </Text>
-                    </Box>
-                  </Box>
-
-                  <Image
-                    source={require('../Assests/bothsidedarrow.png')}
-                    alignSelf={'center'}
-                    alt="img"
-                    position={'absolute'}
-                    left={'50%'}></Image>
-
-                  <Box width={'30%'}>
-                    <Text fontSize={'lg'}>TO</Text>
-                    <Text fontSize={'xs'} fontWeight={'600'} marginTop={'1'}>
-                      {ride.Toloc}
-                    </Text>
-                  </Box>
+              <Box width={'95%'} borderWidth={'1'} marginX={'auto'} padding={'3'} borderRadius={'md'} backgroundColor={'#EDEEF0'}>
+              <Flex flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                <Box width={'40%'}>
+                <Text fontSize={'xl'} fontWeight={'600'} >From</Text>
+                <Text fontSize={'sm'}>{ride.FromLoc}</Text>
                 </Box>
 
-                <Button
+                <Icons name='arrow-switch' size={25} color="#108943"></Icons>
+
+                <Box width={'40%'}>
+                <Text fontSize={'xl'} fontWeight={'600'} >To</Text>
+                <Text fontSize={'sm'}>{ride.Toloc}</Text>
+                </Box>
+
+
+              </Flex>
+              <Flex flexDirection={'row'} marginTop={'15'} justifyContent={'space-between'}>
+              <Box display={'flex'} alignItems={'center'} flexDirection={'row'}>
+                    <Icon1 name='clock' size={25} />
+                    <Text>{formatTime(ride.updatedAt)}</Text>
+                  </Box>
+
+                  <Box display={'flex'} style={{elevation:2}} background={'#FFFFFF'} paddingX={'4'} borderRadius={'2'}>
+                    <Text>{ride.Inside}</Text>
+
+                  </Box>
+
+                 
+
+              </Flex>
+
+
+              <Button
+              marginTop={'4'}
                   bgColor={'#E6712E'}
+                  width={'60%'}
                   onPress={() => acceptRide(ride._id)}
-                  mb={4}>
+                  mb={4}
+                  alignSelf={'center'}>
                   Accept ride
                 </Button>
-                <Divider width={'93%'} marginX={'auto'} />
-              </Box>
+              
+            </Box>
             ))
           )}
         </Box>
+
+     
       </ScrollView>
     </NativeBaseProvider>
   );
