@@ -19,19 +19,27 @@ import Icon1 from 'react-native-vector-icons/Feather'
 
 const Homerider = ({navigation}) => {
   const [rides, setRides] = useState([]);
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [driverid , setDriverid] = useState(null)
+  const [name, setName] = useState('');
+  const [driverid, setDriverId] = useState('');
 
-  const getName = async () => {
-    const name = await AsyncStorage.getItem('name');
-    const driverid = await AsyncStorage.getItem('driverid')
-    setDriverid(driverid)
-    console.log(driverid)
-    setName(name);
-  };
 
   useEffect(() => {
+
+
+    const getStorageData = async () => {
+      try {
+        const storedName = await AsyncStorage.getItem('name');
+        const storedDriverId = await AsyncStorage.getItem('driverid');
+        console.log(storedDriverId + " cihjgjh")
+        setName(storedName || '');
+        setDriverId(storedDriverId || '');
+      } catch (error) {
+        console.error('Failed to fetch storage data', error);
+      }
+    };
+
+
     const getrides = async () => {
       setLoading(true);
       try {
@@ -49,7 +57,8 @@ const Homerider = ({navigation}) => {
     };
 
     getrides();
-    getName();
+    getStorageData();
+
   }, []);
 
   const acceptRide = async Rideid => {
@@ -111,7 +120,7 @@ const Homerider = ({navigation}) => {
             </View>
           ) : (
             rides.map((ride, index) => (
-              <Box width={'95%'} borderWidth={'1'} marginX={'auto'} padding={'3'} borderRadius={'md'} backgroundColor={'#EDEEF0'}>
+              <Box width={'95%'} borderWidth={'1'} marginX={'auto'} padding={'3'} borderRadius={'md'} backgroundColor={'#EDEEF0'} marginTop={'4'}>
               <Flex flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
                 <Box width={'40%'}>
                 <Text fontSize={'xl'} fontWeight={'600'} >From</Text>

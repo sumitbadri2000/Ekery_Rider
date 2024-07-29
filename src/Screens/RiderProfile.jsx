@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   Box,
   Button,
+  Flex,
   Image,
   Input,
   NativeBaseProvider,
@@ -12,6 +13,7 @@ import {
 } from 'native-base';
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const RiderProfile = ({navigation}) => {
   const [locname, setLocName] = useState('');
@@ -25,6 +27,8 @@ const RiderProfile = ({navigation}) => {
         const userid = await AsyncStorage.getItem('userid');
         const getname = await AsyncStorage.getItem('name');
         const getemail = await AsyncStorage.getItem('email');
+
+
 
         console.log(getname, getemail, userid);
 
@@ -102,17 +106,40 @@ const RiderProfile = ({navigation}) => {
   return (
     <NativeBaseProvider>
       <ScrollView>
-        <Box style={{gap: 10}} height={'90%'}>
-          <Box justifyContent={'center'} alignItems={'center'} height={'40%'}>
-            <Image
-              resizeMode="contain"
-              style={{width: '30%'}}
-              source={require('../Assests/userprofile.png')}
-              alt="user"
-            />
+        <Box style={{gap: 10}} >
+          <Box justifyContent={'center'} alignItems={'center'} height={'56'} style={{elevation:5}} backgroundColor={'#FFFFFF'} width={'90%'} marginX={'auto'} marginTop={'10'} borderRadius={'md'}>
+            <Image source={require('../Assests/portflio-photo.png')} alt='vh'></Image>
+            <Text fontWeight={'600'} fontSize={'lg'}>{locname}</Text>
+            <Text fontSize={'sm'}>{locemail}</Text>
+
+            
           </Box>
 
-          {editing ? (
+          <Box width={'90%'} marginX={'auto'}>
+            <Flex flexDirection={'row'} alignItems={'center'}>
+              <Icon name='phone-outgoing' size={20} color="#E97939"></Icon>
+              <Text marginLeft={'3'} fontWeight={'semibold'}>+91 982 3563 678</Text>
+            </Flex>
+
+          </Box>
+
+          <Box width={'90%'} marginX={'auto'}>
+            <Flex flexDirection={'row'} alignItems={'center'}>
+              <Icon name='email-check-outline' size={20} color="#E97939"></Icon>
+              <Text marginLeft={'3'} fontWeight={'semibold'}>{locemail}</Text>
+            </Flex>
+
+          </Box>
+
+          <Box borderWidth={'1'} height={'12'} width={'80%'} marginX={'auto'} borderRadius={'md'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+            <Flex flexDirection={'row'} justifyContent={'space-between'} width={'100%'} paddingX={'4'}>
+              <Text>Total Rides</Text>
+              <Text>432</Text>
+            </Flex>
+          </Box>
+
+          {/* {editing ? (
             <View
               style={{
                 backgroundColor: 'white',
@@ -225,19 +252,22 @@ const RiderProfile = ({navigation}) => {
               }}>
               Edit
             </Text>
-          )}
+          )} */}
         </Box>
 
         <Box
-          height={'10%'}
           // alignItems={'flex-end'}
           justifyContent={'flex-end'}>
           <Button
-            width={'40%'}
+          width={'80%'}
+           paddingX={'16'}
             marginX={'auto'}
             backgroundColor={'#333333'}
-            onPress={handleLogout}>
-            Logout
+            marginTop={'5'}
+            onPress={handleLogout} 
+            >
+              <Text color={'white'}>Logout</Text>
+            
           </Button>
         </Box>
       </ScrollView>

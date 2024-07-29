@@ -4,16 +4,19 @@ import axios from 'axios';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import { handlePayment } from '../config/Paymentutils';
+import { collectCash } from '../config/Paymentutils';
+import { Alert } from 'react-native';
 
 import {Box, Text, Button} from 'native-base';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 
 const Ridedetails = ({navigation, route}) => {
   const [ride, setRide] = useState(null);
   const [fromCoordinates, setFromCoordinates] = useState(null);
   const [toCoordinates, setToCoordinates] = useState(null);
-  const socket = io('http://192.168.1.18:5000');
+  // const socket = io('http://192.168.1.18:5000');
   const [riderCurrentLoc, setRiderCurrentLoc] = useState({
     latitude: 28.7041, // Initial latitude for Pitampura
     longitude: 77.1025, // Initial longitude for Pitampura
@@ -52,7 +55,7 @@ const Ridedetails = ({navigation, route}) => {
   const startRide = async () => {
     try {
       await axios.post(`http://192.168.1.18:5000/api/start-ride/${RideId}`);
-      socket.emit('rideStatusChange', {RideId: RideId, status: 'started'}); // Emit socket event
+      // socket.emit('rideStatusChange', {RideId: RideId, status: 'started'}); // Emit socket event
       setRide({...ride, status: 'started'}); // Update local state
     } catch (error) {
       console.error(error);
@@ -62,7 +65,7 @@ const Ridedetails = ({navigation, route}) => {
   const reachUser = async () => {
     try {
       await axios.post(`http://192.168.1.18:5000/api/reach-user/${RideId}`);
-      socket.emit('rideStatusChange', {RideId: RideId, status: 'arrived'});
+      // socket.emit('rideStatusChange', {RideId: RideId, status: 'arrived'});
       setRide({...ride, status: 'arrived'});
     } catch (error) {
       console.error(error);
@@ -72,8 +75,34 @@ const Ridedetails = ({navigation, route}) => {
   const endRide = async () => {
     try {
       await axios.post(`http://192.168.1.18:5000/api/end-ride/${RideId}`);
-      socket.emit('rideStatusChange', {RideId: RideId, status: 'completed'});
+      // socket.emit('rideStatusChange', {RideId: RideId, status: 'completed'});
       setRide({...ride, status: 'completed'});
+
+      Alert.alert(
+        "Collect Payment",
+        "Choose payment method:",
+        [
+          {
+            text: "Collect Cash",
+            onPress: () => collectCash(RideId, () => {
+              console.log('Cash collected successfully');
+            }, (error) => {
+              console.error('Error collecting cash:', error);
+            }),
+          },
+          {
+            text: "Collect via Company",
+            onPress: () => handlePayment(ride.fare, (data) => {
+              console.log('Payment successful:', data);
+              // Save payment details to your backend
+              savePaymentDetails(data);
+            }, (error) => {
+              console.error('Payment failed:', error);
+            }),
+          }
+        ],
+        { cancelable: true }
+      );
     } catch (error) {
       console.error(error);
     }

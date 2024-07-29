@@ -1,9 +1,12 @@
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NativeBaseProvider} from 'native-base';
 import RiderNavigation from './RiderNavigation';
 import RiderProfile from '../Screens/RiderProfile';
+import Record from '../Screens/Record';
+import Recordnavigator from './Recordnavigator';
 const RiderTab = createBottomTabNavigator();
 
 const Riderbottomnavigator = () => {
@@ -18,7 +21,7 @@ const Riderbottomnavigator = () => {
           component={RiderNavigation}
           options={{
             headerShown: false,
-            tabBarLabel: 'Rides',
+            tabBarLabel: 'Active Rides',
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="home" color={color} size={size} />
             ),
@@ -32,7 +35,19 @@ const Riderbottomnavigator = () => {
             headerShown: false,
             tabBarLabel: 'Profile',
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" color={color} size={size} />
+              <MaterialIcons name="account-circle" color={color} size={size} />
+            ),
+          }}
+        />
+
+<RiderTab.Screen
+          name="records"
+          component={Recordnavigator}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Record',
+            tabBarIcon: ({color, size}) => (
+              <Icons name="folder-information-outline" color={color} size={size} />
             ),
           }}
         />
