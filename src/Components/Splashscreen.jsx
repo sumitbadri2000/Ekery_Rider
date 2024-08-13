@@ -4,6 +4,8 @@ import {NativeBaseProvider, Text, Box, Image} from 'native-base';
 
 import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SvgLogo from '../Assests/logo.svg';
+
 
 const Splashscreen = ({navigation}) => {
   useEffect(() => {
@@ -31,8 +33,8 @@ const Splashscreen = ({navigation}) => {
         display={'flex'}
         justifyContent={'center'}
         alignItems={'center'}>
-        <Image source={require('../Assests/logo.png')}></Image>
-      </Box>
+ <SvgLogo width={200} height={200} />
+       </Box>
     </NativeBaseProvider>
   );
 };

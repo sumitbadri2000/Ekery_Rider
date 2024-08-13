@@ -1,11 +1,13 @@
 import {TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import {Box, Text, Stack, Input, Button, Image, ScrollView , Flex, Divider , Spinner} from 'native-base';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary , launchCamera} from 'react-native-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/AntDesign'
 import Icons from 'react-native-vector-icons/MaterialIcons'
+import { Alert } from 'react-native';
+
 
 const Ridersignup = ({navigation}) => {
   const [name, setName] = useState('');
@@ -23,14 +25,36 @@ const Ridersignup = ({navigation}) => {
   const [isDriverinfo , setIsDriverinfo] = useState(true)
   const [isLoader , setIsLoader] = useState(false)
 
-  const handleChoosePhoto = setter => {
-    launchImageLibrary({}, response => {
-      if (response.assets && response.assets.length > 0) {
-        const asset = response.assets[0];
-        console.log(asset);
-        setter(asset);
-      }
-    });
+  const handleChoosePhoto = (setter) => {
+    Alert.alert(
+      'Select Option',
+      'Choose an option to upload photo',
+      [
+        {
+          text: 'Camera',
+          onPress: () => {
+            launchCamera({}, (response) => {
+              if (response.assets && response.assets.length > 0) {
+                const asset = response.assets[0];
+                setter(asset);
+              }
+            });
+          },
+        },
+        {
+          text: 'Gallery',
+          onPress: () => {
+            launchImageLibrary({}, (response) => {
+              if (response.assets && response.assets.length > 0) {
+                const asset = response.assets[0];
+                setter(asset);
+              }
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleNext = ()=>{
@@ -83,7 +107,7 @@ const Ridersignup = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.1.18:5000/api/driver/new',
+        'https://app-api.ekery.in/api/driver/new',
         formData,
         {
           headers: {
@@ -149,14 +173,7 @@ const Ridersignup = ({navigation}) => {
             onChangeText={setMail}
           />
 
-          <Input
-            variant="underlined"
-            placeholder="Enter Gst (Optional)"
-            fontSize={'lg'}
-            placeholderTextColor={'black'}
-            value={gst}
-            onChangeText={setGst}
-          />
+   
 
           <Input
             variant="underlined"
@@ -199,14 +216,14 @@ const Ridersignup = ({navigation}) => {
               justifyContent={'space-between'}
               alignItems={'center'}>
               <Flex
-                width={'48'}
+              
                 flexDirection={'row'}
                 alignItems={'center'}
                 justifyContent={'space-between'}>
                 <Icon name="filetext1" size={22} />
-                <Box>
+                <Box marginLeft={'4'}>
                   <Text fontSize={'md'} fontWeight={'medium'}>
-                    Your PAN Card Photo
+                    Your Photo
                   </Text>
                   <Text fontSize={'sm'} fontWeight={'light'}>
                     Must be clearly visible

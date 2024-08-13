@@ -35,7 +35,7 @@ export const handlePayment = async (amount, onSuccess, onFailure) => {
 // Function to handle cash collection
 export const collectCash = async (rideId, onSuccess, onFailure) => {
   try {
-    await axios.post(`http://192.168.1.18:5000/api/collect-cash/${rideId}`);
+    await axios.post(`https://app-api.carexpert.org.in/api/collect-cash/${rideId}`);
     // On success, update state or perform other actions
     if (onSuccess) onSuccess();
   } catch (error) {

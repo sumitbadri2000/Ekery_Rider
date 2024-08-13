@@ -28,7 +28,7 @@ const Ridedetails = ({navigation, route}) => {
     const getRidedetails = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.1.18:5000/api/ride-details/${RideId}`,
+          `https://app-api.ekery.in/api/ride-details/${RideId}`,
         );
 
         const rideData = response.data;
@@ -54,7 +54,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const startRide = async () => {
     try {
-      await axios.post(`http://192.168.1.18:5000/api/start-ride/${RideId}`);
+      await axios.post(`https://app-api.ekery.in/api/start-ride/${RideId}`);
       // socket.emit('rideStatusChange', {RideId: RideId, status: 'started'}); // Emit socket event
       setRide({...ride, status: 'started'}); // Update local state
     } catch (error) {
@@ -64,7 +64,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const reachUser = async () => {
     try {
-      await axios.post(`http://192.168.1.18:5000/api/reach-user/${RideId}`);
+      await axios.post(`https://app-api.ekery.in/api/reach-user/${RideId}`);
       // socket.emit('rideStatusChange', {RideId: RideId, status: 'arrived'});
       setRide({...ride, status: 'arrived'});
     } catch (error) {
@@ -74,7 +74,7 @@ const Ridedetails = ({navigation, route}) => {
 
   const endRide = async () => {
     try {
-      await axios.post(`http://192.168.1.18:5000/api/end-ride/${RideId}`);
+      await axios.post(`https://app-api.ekery.in/api/end-ride/${RideId}`);
       // socket.emit('rideStatusChange', {RideId: RideId, status: 'completed'});
       setRide({...ride, status: 'completed'});
 

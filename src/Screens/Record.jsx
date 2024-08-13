@@ -24,7 +24,7 @@ const Record = ({navigation}) => {
 
   const getCompletedRides = async () => {
     try {
-      const response = await axios.post(`http://192.168.1.18:5000/api/get-rides/${driverId}`);
+      const response = await axios.post(`https://app-api.ekery.in/api/get-rides/${driverId}`);
       setCompleted(response.data);
     } catch (error) {
       console.error('Failed to fetch completed rides', error);

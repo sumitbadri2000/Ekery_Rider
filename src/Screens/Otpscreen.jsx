@@ -37,7 +37,7 @@ const Otpscreen = ({route, navigation}) => {
   const handledriversignup = async() =>{
 
     try{
-      const response = await axios.post("http://192.168.1.18:5000/api/driver/check-driver" , {
+      const response = await axios.post("https://app-api.ekery.in/api/driver/check-driver" , {
         phoneNumber:91+phoneNumber
       })
       console.log(response.data)
@@ -63,29 +63,29 @@ const Otpscreen = ({route, navigation}) => {
   const handleSubmit = async () => {
     console.log(otpinput);
 
-    try {
-      const response = await axios.post(
-        'http://192.168.1.18:5000/api/users/verify-otp',
-        {
-          phoneNumber: '+91' + phoneNumber,
-          otpCode: otpinput,
-          verifySid: 'VA9678bd61293bb3b15dc8c3c2cf0bcb02',
-        },
-      );
+    // try {
+    //   const response = await axios.post(
+    //     'http://192.168.1.18:5000/api/users/verify-otp',
+    //     {
+    //       phoneNumber: '+91' + phoneNumber,
+    //       otpCode: otpinput,
+    //       verifySid: 'VA9678bd61293bb3b15dc8c3c2cf0bcb02',
+    //     },
+    //   );
 
-      console.log(response.data);
+    //   console.log(response.data);
 
-      if (response.data.success == true) {
-        handledriversignup()
-      } else {
-        Alert.alert('something went wrong');
-      }
-    } catch (error) {
-      console.error(error);
-      Alert('something went wrong');
-    }
+    //   if (response.data.success == true) {
+    //     
+    //   } else {
+    //     Alert.alert('something went wrong');
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   Alert('something went wrong');
+    // }
  
-
+    handledriversignup()
 
   };
 

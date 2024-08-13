@@ -32,46 +32,48 @@ const Signinmobile = ({navigation}) => {
   console.log(value)
   const handleSubmit = async () => {
 
-    setLoader(true)
-    try {
-      const number = '+91' + value;
+    // setLoader(true)
+    // try {
+    //   const number = '+91' + value;
 
-      const response = await axios.post(
-        'http://192.168.1.18:5000/api/users/send-otp',
-        {
-          phoneNumber: number,
-        },
-      );
-      console.log(response.data)
-      if(response.data.success){
-        navigation.navigate('Otp', {phoneNumber: value });
-        setLoader(false)
-      }
-      else{
-        Alert.alert('Error', 'Error in sending otp , Please try again', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => setLoader(false)},
-        ]);
-      }
+    //   const response = await axios.post(
+    //     'http://192.168.1.18:5000/api/users/send-otp',
+    //     {
+    //       phoneNumber: number,
+    //     },
+    //   );
+    //   console.log(response.data)
+    //   if(response.data.success){
+    //     navigation.navigate('Otp', {phoneNumber: value });
+    //     setLoader(false)
+    //   }
+    //   else{
+    //     Alert.alert('Error', 'Error in sending otp , Please try again', [
+    //       {
+    //         text: 'Cancel',
+    //         onPress: () => console.log('Cancel Pressed'),
+    //         style: 'cancel',
+    //       },
+    //       {text: 'OK', onPress: () => setLoader(false)},
+    //     ]);
+    //   }
 
 
       
-    } catch (error) {
-      Alert.alert('Error', 'Error in sending otp , Please try again', [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => setLoader(false)},
-      ]);
+    // } catch (error) {
+    //   Alert.alert('Error', 'Error in sending otp , Please try again', [
+    //     {
+    //       text: 'Cancel',
+    //       onPress: () => console.log('Cancel Pressed'),
+    //       style: 'cancel',
+    //     },
+    //     {text: 'OK', onPress: () => setLoader(false)},
+    //   ]);
 
-      console.error(error);
-    }
+    //   console.error(error);
+    // }
+    
+    navigation.navigate('Otp', {phoneNumber: value });
 
   };
 

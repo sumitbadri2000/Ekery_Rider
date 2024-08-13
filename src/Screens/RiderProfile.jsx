@@ -58,7 +58,7 @@ const RiderProfile = ({navigation}) => {
       console.log('Updating user data', updatedData);
 
       const resp = await axios.patch(
-        `http://192.168.1.10:5000/api/driver/update/${locid}`,
+        `https://app-api.ekery.in/api/driver/update/${locid}`,
         updatedData,
       );
 

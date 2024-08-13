@@ -1,37 +1,31 @@
-import {ActivityIndicator, View} from 'react-native';
-import React, {createFactory, useEffect, useState} from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
-  HStack,
   NativeBaseProvider,
-  VStack,
   Text,
   Image,
-  Divider,
   Button,
   ScrollView,
   Flex,
 } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icons from 'react-native-vector-icons/Octicons'
-import Icon1 from 'react-native-vector-icons/Feather'
+import Icons from 'react-native-vector-icons/Octicons';
+import Icon1 from 'react-native-vector-icons/Feather';
 
-const Homerider = ({navigation}) => {
+const Homerider = ({ navigation }) => {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [driverid, setDriverId] = useState('');
 
-
   useEffect(() => {
-
-
     const getStorageData = async () => {
       try {
         const storedName = await AsyncStorage.getItem('name');
         const storedDriverId = await AsyncStorage.getItem('driverid');
-        console.log(storedDriverId + " cihjgjh")
+        console.log(storedDriverId + ' cihjgjh');
         setName(storedName || '');
         setDriverId(storedDriverId || '');
       } catch (error) {
@@ -39,17 +33,13 @@ const Homerider = ({navigation}) => {
       }
     };
 
-
     const getrides = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          'http://192.168.1.18:5000/api/all-rides',
-        );
+        const response = await axios.get('https://app-api.ekery.in/api/all-rides');
         console.log(response.data);
         setLoading(false);
         setRides(response.data);
-        console.log(rides);
       } catch (error) {
         console.error(error);
         setLoading(true);
@@ -58,17 +48,17 @@ const Homerider = ({navigation}) => {
 
     getrides();
     getStorageData();
-
   }, []);
 
   const acceptRide = async Rideid => {
     try {
       const response = await axios.post(
-        `http://192.168.1.18:5000/api/accept-ride/${Rideid}`,
-        {Riderid: driverid},
+        `https://app-api.ekery.in/api/accept-ride/${Rideid}`,
+        { Riderid: driverid },
+        console.log(response.data)
       );
-      if (response.status == 200) {
-        navigation.navigate('Ridedetails', {RideId: Rideid});
+      if (response.status === 200) {
+        navigation.navigate('Ridedetails', { RideId: Rideid });
       }
     } catch (error) {
       console.error(error);
@@ -82,7 +72,6 @@ const Homerider = ({navigation}) => {
     const seconds = date.getUTCSeconds().toString().padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
   };
-
 
   return (
     <NativeBaseProvider>
@@ -120,40 +109,52 @@ const Homerider = ({navigation}) => {
             </View>
           ) : (
             rides.map((ride, index) => (
-              <Box width={'95%'} borderWidth={'1'} marginX={'auto'} padding={'3'} borderRadius={'md'} backgroundColor={'#EDEEF0'} marginTop={'4'}>
-              <Flex flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                <Box width={'40%'}>
-                <Text fontSize={'xl'} fontWeight={'600'} >From</Text>
-                <Text fontSize={'sm'}>{ride.FromLoc}</Text>
-                </Box>
+              <Box
+                key={index}
+                width={'95%'}
+                borderWidth={'1'}
+                marginX={'auto'}
+                padding={'3'}
+                borderRadius={'md'}
+                backgroundColor={'#EDEEF0'}
+                marginTop={'4'}>
+                <Flex flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                  <Box width={'40%'}>
+                    <Text fontSize={'xl'} fontWeight={'600'}>From</Text>
+                    <Text fontSize={'sm'}>{ride.FromLoc}</Text>
+                  
 
-                <Icons name='arrow-switch' size={25} color="#108943"></Icons>
+                    <Text fontSize={'sm'} fontWeight={'600'}>Building :
+                      <Text fontWeight={'400'} marginTop={'6'}>{ride.fromBuildingname}</Text> </Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>Floor: 
+                    <Text fontWeight={'400'} marginTop={'6'}>{ride.fromFloor}</Text></Text>
+                    
+                  </Box>
 
-                <Box width={'40%'}>
-                <Text fontSize={'xl'} fontWeight={'600'} >To</Text>
-                <Text fontSize={'sm'}>{ride.Toloc}</Text>
-                </Box>
+                  <Icons name='arrow-switch' size={25} color="#108943" />
 
-
-              </Flex>
-              <Flex flexDirection={'row'} marginTop={'15'} justifyContent={'space-between'}>
-              <Box display={'flex'} alignItems={'center'} flexDirection={'row'}>
+                  <Box width={'40%'}>
+                    <Text fontSize={'xl'} fontWeight={'600'}>To</Text>
+                    <Text fontSize={'sm'}>{ride.Toloc}</Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>Building :
+                      <Text fontWeight={'400'} marginTop={'6'}>{ride.ToBuildingname}</Text> </Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>Floor: 
+                    <Text fontWeight={'400'} marginTop={'6'}>{ride.Tofloor}</Text></Text>
+                  </Box>
+                </Flex>
+                <Flex flexDirection={'row'} marginTop={'15'} justifyContent={'space-between'}>
+                  <Box display={'flex'} alignItems={'center'} flexDirection={'row'}>
                     <Icon1 name='clock' size={25} />
                     <Text>{formatTime(ride.updatedAt)}</Text>
                   </Box>
 
-                  <Box display={'flex'} style={{elevation:2}} background={'#FFFFFF'} paddingX={'4'} borderRadius={'2'}>
+                  <Box display={'flex'} style={{ elevation: 2 }} background={'#FFFFFF'} paddingX={'4'} borderRadius={'2'}>
                     <Text>{ride.Inside}</Text>
-
                   </Box>
+                </Flex>
 
-                 
-
-              </Flex>
-
-
-              <Button
-              marginTop={'4'}
+                <Button
+                  marginTop={'4'}
                   bgColor={'#E6712E'}
                   width={'60%'}
                   onPress={() => acceptRide(ride._id)}
@@ -161,13 +162,10 @@ const Homerider = ({navigation}) => {
                   alignSelf={'center'}>
                   Accept ride
                 </Button>
-              
-            </Box>
+              </Box>
             ))
           )}
         </Box>
-
-     
       </ScrollView>
     </NativeBaseProvider>
   );
