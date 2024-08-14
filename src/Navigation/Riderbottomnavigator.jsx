@@ -2,6 +2,7 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Wallet from 'react-native-vector-icons/Entypo'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NativeBaseProvider} from 'native-base';
 import RiderNavigation from './RiderNavigation';
@@ -61,7 +62,7 @@ const Riderbottomnavigator = () => {
           headerShown: false,
           tabBarLabel: 'Wallet',
           tabBarIcon: ({color, size}) => (
-            <Icons name="account-balance-wallet" color={color} size={size} />
+            <Wallet name="wallet" color={color} size={size} />
           ),
         }}/>
       </RiderTab.Navigator>

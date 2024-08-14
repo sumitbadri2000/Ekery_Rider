@@ -1,6 +1,6 @@
-import { View, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { Box, Text, Input, Button } from 'native-base';
+import {View, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Box, Text, Input, Button, Flex, Pressable} from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RazorpayCheckout from 'react-native-razorpay';
@@ -19,31 +19,37 @@ const Topupscreen = () => {
     DetailDriver();
   }, []);
 
-  const handlePaymentSuccess = async (paymentId) => {
+  const handlePaymentSuccess = async paymentId => {
     try {
-      const response = await axios.post("https://app-api.ekery.in/api/Driverwallet/add", {
-        driverId: riderid,
-        amount: amount,
-        paymentId: paymentId,
-      });
+      const response = await axios.post(
+        'https://app-api.ekery.in/api/Driverwallet/add',
+        {
+          driverId: riderid,
+          amount: amount,
+          paymentId: paymentId,
+        },
+      );
       console.log(response.data);
       Alert.alert('Payment Successful', 'Your payment was successful.');
     } catch (error) {
       console.error(error);
-      Alert.alert('Payment Error', 'There was an error processing your payment. Please try again.');
+      Alert.alert(
+        'Payment Error',
+        'There was an error processing your payment. Please try again.',
+      );
     }
   };
 
   const handlePayment = () => {
     const options = {
-      description: 'Wallet Top-up',
-      image: 'https://taxisure.co/wp-content/uploads/2024/03/taxi_sure__4_-removebg-preview.png', // Replace with your logo URL
+      description: 'Top up',
+      image: 'https://play-lh.googleusercontent.com/dlakhXyS6p4O8Ata49R9danonfIpTLxacieRvLEVYIHuaqM0Hk4Zor8Qd-n3qv40JZvl=w240-h480-rw', // Replace with your logo URL
       currency: 'INR',
-      key: 'rzp_live_hfAQTM2pl9qyV7', // Replace with your Razorpay key
+      key: 'rzp_live_DwOWAGfeWFBMd3', // Replace with your Razorpay key
       amount: amount * 100, // Razorpay amount is in paise
-      name: 'Taxisure',
+      name: 'Ekery',
       prefill: {
-        riderid: riderid
+        userid:userid
       },
       theme: { color: '#000000' },
     };
@@ -56,17 +62,23 @@ const Topupscreen = () => {
       .catch((error) => {
         // handle failure
         console.error(error);
-        Alert.alert('Payment Failed', 'Your payment could not be completed. Please try again.');
+        Alert.alert('Payment Cancelled', 'You have cancelled the payment.', [
+          { text: 'OK' }
+        ]);
       });
   };
 
-  const handleChange = (value) => {
+  const handleChange = value => {
     if (/^\d*$/.test(value)) {
       setAmount(value);
-      setIsValid(Number(value) > 100);
+      setIsValid(Number(value) > 0);
     }
   };
 
+  const handlePresetAmount = value => {
+    setAmount(String(value));
+    setIsValid(value > 100);
+  };
   return (
     <View>
       <Box
@@ -75,8 +87,7 @@ const Topupscreen = () => {
         display="flex"
         justifyContent="start"
         alignItems="start"
-        backgroundColor="#FFFFFF"
-      >
+        backgroundColor="#FFFFFF">
         <Box width="90%" marginX="auto" marginTop="10">
           <Text fontSize="2xl" fontWeight="semibold">
             Enter Top up amount
@@ -92,6 +103,31 @@ const Topupscreen = () => {
             keyboardType="numeric"
           />
         </Box>
+
+        <Flex
+          flexDirection={'row'}
+          style={{gap: 8}}
+          pt={6}
+          width="90%"
+          marginX="auto">
+          
+          <Pressable onPress={() => handlePresetAmount(200)}>
+            <Box py={2} px={3} backgroundColor={'#E87429'} borderRadius={'full'}>
+              <Text color={'white'} fontWeight={800} fontSize={16}>
+                + 200
+              </Text>
+            </Box>
+          </Pressable>
+
+          <Pressable onPress={() => handlePresetAmount(500)}>
+            <Box py={2} px={3} backgroundColor={'#E87429'} borderRadius={'full'}>
+              <Text color={'white'} fontWeight={800} fontSize={16}>
+                + 500
+              </Text>
+            </Box>
+          </Pressable>
+          
+        </Flex>
         <Button
           marginTop="12"
           width="80%"
@@ -100,8 +136,7 @@ const Topupscreen = () => {
           bg="#000000"
           colorScheme="black"
           isDisabled={!isValid}
-          onPress={handlePayment}
-        >
+          onPress={handlePayment}>
           Continue
         </Button>
       </Box>

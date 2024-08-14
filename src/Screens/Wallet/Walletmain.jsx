@@ -86,7 +86,7 @@ const Walletmain = ({ navigation }) => {
             <MaterialIcons name="arrow-forward-ios" size={25} color={'#000000'} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity onPress={() => { navigation.navigate('BankDetails') }} style={styles.actionButton}>
             <Flex style={styles.flex}>
               <Image source={require('../../Assests/wallet/icon4.png')} alt='Bank Details' style={styles.icon} />
               <Text style={styles.actionText}>Bank Details</Text>

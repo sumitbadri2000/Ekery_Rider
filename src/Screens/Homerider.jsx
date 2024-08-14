@@ -1,5 +1,5 @@
-import { ActivityIndicator, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {ActivityIndicator, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   NativeBaseProvider,
@@ -13,8 +13,11 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Octicons';
 import Icon1 from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/EvilIcons';
+import {io} from 'socket.io-client';
+const socket = io('https://app-api.ekery.in/');
 
-const Homerider = ({ navigation }) => {
+const Homerider = ({navigation}) => {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
@@ -36,7 +39,9 @@ const Homerider = ({ navigation }) => {
     const getrides = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://app-api.ekery.in/api/all-rides');
+        const response = await axios.get(
+          'https://app-api.ekery.in/api/pending-rides',
+        );
         console.log(response.data);
         setLoading(false);
         setRides(response.data);
@@ -52,24 +57,33 @@ const Homerider = ({ navigation }) => {
 
   const acceptRide = async Rideid => {
     try {
+      console.log('check', driverid, Rideid);
       const response = await axios.post(
         `https://app-api.ekery.in/api/accept-ride/${Rideid}`,
-        { Riderid: driverid },
-        console.log(response.data)
+        {Riderid: driverid},
+        console.log(response, 'accepts data'),
       );
       if (response.status === 200) {
-        navigation.navigate('Ridedetails', { RideId: Rideid });
+        navigation.navigate('Ridedetails', {RideId: Rideid});
       }
     } catch (error) {
       console.error(error);
     }
   };
-
   const formatTime = timestamp => {
+    if (!timestamp) return 'Invalid time';
+
     const date = new Date(timestamp);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return 'Invalid time';
+    }
+
+    const hours = date.getHours().toString().padStart(2, '0'); // Local time
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+
     return `${hours}:${minutes}:${seconds}`;
   };
 
@@ -98,9 +112,13 @@ const Homerider = ({ navigation }) => {
               position={'absolute'}
               left={'3'}
               marginLeft={'3'}></Image>
-            <Text fontSize={'2xl'} color={'#FFFFFF'} textAlign={'center'}>
+            <Text fontSize={16} color={'#FFFFFF'} textAlign={'center'}>
               Requested Trip
             </Text>
+
+            <Box ml={20}>
+              <Icon2 name={'refresh'} size={40} color={'white'} />
+            </Box>
           </Box>
 
           {loading ? (
@@ -118,37 +136,79 @@ const Homerider = ({ navigation }) => {
                 borderRadius={'md'}
                 backgroundColor={'#EDEEF0'}
                 marginTop={'4'}>
-                <Flex flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                <Flex
+                  flexDirection={'row'}
+                  justifyContent={'space-between'}
+                  alignItems={'center'}>
                   <Box width={'40%'}>
-                    <Text fontSize={'xl'} fontWeight={'600'}>From</Text>
+                    <Text fontSize={'xl'} fontWeight={'600'}>
+                      From
+                    </Text>
                     <Text fontSize={'sm'}>{ride.FromLoc}</Text>
-                  
 
-                    <Text fontSize={'sm'} fontWeight={'600'}>Building :
-                      <Text fontWeight={'400'} marginTop={'6'}>{ride.fromBuildingname}</Text> </Text>
-                    <Text fontSize={'sm'} fontWeight={'600'}>Floor: 
-                    <Text fontWeight={'400'} marginTop={'6'}>{ride.fromFloor}</Text></Text>
-                    
+                    <Text fontSize={'sm'} fontWeight={'600'}>
+                      Building :
+                      <Text fontWeight={'400'} marginTop={'6'}>
+                        {ride.fromBuildingname}
+                      </Text>{' '}
+                    </Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>
+                      Floor:
+                      <Text fontWeight={'400'} marginTop={'6'}>
+                        {ride.fromFloor}
+                      </Text>
+                    </Text>
+
+
                   </Box>
 
-                  <Icons name='arrow-switch' size={25} color="#108943" />
+                  <Icons name="arrow-switch" size={25} color="#108943" />
 
                   <Box width={'40%'}>
-                    <Text fontSize={'xl'} fontWeight={'600'}>To</Text>
+                    <Text fontSize={'xl'} fontWeight={'600'}>
+                      To
+                    </Text>
                     <Text fontSize={'sm'}>{ride.Toloc}</Text>
-                    <Text fontSize={'sm'} fontWeight={'600'}>Building :
-                      <Text fontWeight={'400'} marginTop={'6'}>{ride.ToBuildingname}</Text> </Text>
-                    <Text fontSize={'sm'} fontWeight={'600'}>Floor: 
-                    <Text fontWeight={'400'} marginTop={'6'}>{ride.Tofloor}</Text></Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>
+                      Building :
+                      <Text fontWeight={'400'} marginTop={'6'}>
+                        {ride.ToBuildingname}
+                      </Text>{' '}
+                    </Text>
+                    <Text fontSize={'sm'} fontWeight={'600'}>
+                      Floor:
+                      <Text fontWeight={'400'} marginTop={'6'}>
+                        {ride.Tofloor}
+                      </Text>
+                    </Text>
                   </Box>
                 </Flex>
-                <Flex flexDirection={'row'} marginTop={'15'} justifyContent={'space-between'}>
-                  <Box display={'flex'} alignItems={'center'} flexDirection={'row'}>
-                    <Icon1 name='clock' size={25} />
+
+                <Flex
+                  flexDirection={'row'}
+                  marginTop={'15'}
+                  justifyContent={'space-between'}>
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    flexDirection={'row'}>
+                    <Icon1 name="clock" size={25} />
                     <Text>{formatTime(ride.updatedAt)}</Text>
                   </Box>
 
-                  <Box display={'flex'} style={{ elevation: 2 }} background={'#FFFFFF'} paddingX={'4'} borderRadius={'2'}>
+                  <Text fontSize={'sm'} fontWeight={'600'}>
+                      Fare :
+                      <Text fontWeight={'400'} marginTop={'6'}>
+                        {ride.fare}
+                      </Text>{' '}
+                    </Text>
+
+                  <Box
+                    display={'flex'}
+                    style={{elevation: 2}}
+                    background={'#FFFFFF'}
+                    paddingX={'4'}
+                    borderRadius={'2'}>
                     <Text>{ride.Inside}</Text>
                   </Box>
                 </Flex>
