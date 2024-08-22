@@ -36,6 +36,7 @@ const Ridersignup = ({navigation}) => {
   const [isDocument, setIsDocument] = useState(false);
   const [isDriverinfo, setIsDriverinfo] = useState(true);
   const [isLoader, setIsLoader] = useState(false);
+  const [RC , setRC] = useState(null)
 
   const handleChoosePhoto = setter => {
     Alert.alert(
@@ -69,12 +70,40 @@ const Ridersignup = ({navigation}) => {
     );
   };
 
+  const handleChooseCamera = setter => {
+    launchCamera({}, response => {
+      if (response.assets && response.assets.length > 0) {
+        const asset = response.assets[0];
+        setter(asset);
+      }
+    });
+  }
+
   const handleNext = () => {
     setIsDriverinfo(false);
     setIsDocument(true);
   };
 
   const handleSubmit = async () => {
+    if (
+      !name ||
+      !mail ||
+      !photo ||
+      !aadharfront ||
+      !aadharback ||
+      !panfront ||
+      !panback ||
+      !DLfront ||
+      !DLback ||
+      !RC
+    ) {
+      Alert.alert(
+        'Incomplete Information',
+        'Please upload all required documents before submitting.'
+      );
+      return;
+    }
+
     setIsLoader(true)
     const formData = new FormData();
     formData.append('name', name);
@@ -115,6 +144,11 @@ const Ridersignup = ({navigation}) => {
       uri: DLback.uri,
       type: DLback.type,
       name: DLback.fileName,
+    });
+    formData.append('RC', {
+      uri: RC.uri,
+      type: RC.type,
+      name: RC.fileName,
     });
 
     try {
@@ -215,7 +249,7 @@ const Ridersignup = ({navigation}) => {
               </Text>
               {/* Example of Your PAN Card Photo selection */}
               <TouchableOpacity
-                onPress={() => handleChoosePhoto(setPhoto)}
+                onPress={() => handleChooseCamera(setPhoto)}
                 style={{marginTop: 10}}>
                 <Box
                   width={'100%'}
@@ -525,6 +559,49 @@ const Ridersignup = ({navigation}) => {
                   <Image
                     alt="dss"
                     source={{uri: DLback.uri}}
+                    style={{width: 100, height: 100}}
+                    resizeMode="cover"
+                  />
+                </Box>
+              )}
+
+<TouchableOpacity onPress={() => handleChoosePhoto(setRC)}>
+                <Box
+                  width={'100%'}
+                  display={'flex'}
+                  flexDirection={'row'}
+                  justifyContent={'space-between'}
+                  alignItems={'center'}>
+                  <Flex
+                    width={'64'}
+                    flexDirection={'row'}
+                    alignItems={'center'}
+                    justifyContent={'start'}>
+                    <Icon name="filetext1" size={22} />
+                    <Box marginLeft={'4'}>
+                      <Text fontSize={'md'} fontWeight={'medium'}>
+                        Choose RC Photo
+                      </Text>
+                      <Text fontSize={'sm'} fontWeight={'light'}>
+                        Must be clearly visible
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Icon1 name="arrow-forward-ios" size={25} />
+                </Box>
+                <Divider
+                  borderColor={'muted.500'}
+                  width={'container'}
+                  color={'#000000'}
+                  marginTop={'2'}
+                />
+              </TouchableOpacity>
+
+              {RC && (
+                <Box alignItems="center" marginTop={4}>
+                  <Image
+                    alt="dss"
+                    source={{uri: RC.uri}}
                     style={{width: 100, height: 100}}
                     resizeMode="cover"
                   />
