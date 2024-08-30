@@ -145,11 +145,7 @@ const Ridersignup = ({navigation}) => {
       type: DLback.type,
       name: DLback.fileName,
     });
-    formData.append('RC', {
-      uri: RC.uri,
-      type: RC.type,
-      name: RC.fileName,
-    });
+
 
     try {
     const response = await axios.post(
